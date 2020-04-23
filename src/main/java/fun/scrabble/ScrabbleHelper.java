@@ -5,12 +5,13 @@ import java.util.*;
 import java.util.stream.Collector;
 
 /**
- * A very simple scrabble helper to generate best words for a given state of the scrabble board.
- * 1. Optimizes only on score generated from available letters. Board's square labels are ignored for now.
- * 2. Also, since the board state is unknown, invalid states can be reached if the word overlaps with some other word.
+ * A very simple scrabble helper to generate best words trying to generate maximum score for you.
+ * 1. Optimizes only on score generated from available letters. Board's state (and hence the squared lables) is ignored for now.
+ * 2. Also, since the board state is unknown, invalid states can be reached if the word overlaps with some other word. So skip those words.
  */
-public class WordCombinations {
+public class ScrabbleHelper {
 
+    /* Generates all permutations for a word. */
     static List<Word> getPermutations(List<Letter> combination) {
         if (combination.size() == 1) {
             return new ArrayList<>(){{add(new Word(combination));}};
@@ -36,7 +37,8 @@ public class WordCombinations {
         return words;
     }
 
-    // Maximum #letters = 7 so this list is <= 13699 in size.
+    /* Generates all possible words with the given list of letters. */
+    // Note that the maximum #letters = 7 in Scrabble so this list is <= 13699 in size.
     static List<Word> getAllWordsPossible(List<Letter> letters) {
         List<Word> words = new ArrayList<>();
        // If there are n letters, number of words possible is nP1 + nP2 + nP3 .. + nPn. (Choose and permute)
@@ -59,23 +61,25 @@ public class WordCombinations {
         return words;
     }
 
-    // args is the array of words which are already on the scrabble board.
+    // Version-1 : args is the array of words which are already on the scrabble board. Terrible way to represent board
+    // but hey, wait for next versions.
     public static void main(String[] args) throws IOException {
 
         // letters is the list of letters available to the user.
-        List<Letter> letters = new ArrayList<>();
-        letters.add(new Letter('A', 1));
-        letters.add(new Letter('U', 1));
-        letters.add(new Letter('O', 1));
-        letters.add(new Letter('I', 1));
-        letters.add(new Letter('F', 4));
-        letters.add(new Letter('S', 1));
-        letters.add(new Letter('U', 1));
+        List<Letter> availableLettersToPlayer = new ArrayList<>() {{
+            add(new Letter('N', 1));
+            add(new Letter('S', 1));
+            add(new Letter('H', 4));
+            add(new Letter('I', 1));
+            add(new Letter('I', 1));
+            add(new Letter('T', 1));
+            add(new Letter('E', 1));
+        }};
 
-        List<Word> words = getAllWordsPossible(letters);
+        List<Word> words = getAllWordsPossible(availableLettersToPlayer);
         Set<String> dictionaryWords = getDictionaryWords();
 
-        List<InterestingWord> wordsWithScores = new ArrayList<>();
+        List<DictionaryWordWithScore> wordsWithScores = new ArrayList<>();
         words.forEach(word -> {
             String strWord =
                     word.letters
@@ -93,14 +97,14 @@ public class WordCombinations {
                 String prefixWord = boardWord + strWord;
                 // boardWord is used as a suffix.
                 String sufixWord = strWord + boardWord;
-                Integer score = word.letters.stream().map(letter -> letter.value).reduce(Integer::sum).get();
+                Integer score = word.letters.stream().map(letter -> letter.score).reduce(Integer::sum).get();
 
                 if (dictionaryWords.contains(prefixWord.toLowerCase())) {
-                    wordsWithScores.add(new InterestingWord(strWord, prefixWord, score));
+                    wordsWithScores.add(new DictionaryWordWithScore(strWord, prefixWord, score));
                 }
 
                 if (dictionaryWords.contains(sufixWord.toLowerCase())) {
-                    wordsWithScores.add(new InterestingWord(strWord, sufixWord, score));
+                    wordsWithScores.add(new DictionaryWordWithScore(strWord, sufixWord, score));
                 }
             }
 
@@ -120,11 +124,11 @@ public class WordCombinations {
         return dictionary;
     }
 
-    static class InterestingWord {
+    static class DictionaryWordWithScore {
         String lettersToSelect;
         String wordToForm;
         Integer score;
-        InterestingWord(String lettersToSelect, String wordToForm, Integer score) {
+        DictionaryWordWithScore(String lettersToSelect, String wordToForm, Integer score) {
             this.lettersToSelect = lettersToSelect;
             this.wordToForm = wordToForm;
             this.score = score;
@@ -133,10 +137,10 @@ public class WordCombinations {
 
     static class Letter {
         Character alphabet;
-        Integer value;
-        Letter(Character alphabet, Integer value) {
+        Integer score;
+        Letter(Character alphabet, Integer score) {
             this.alphabet = alphabet;
-            this.value = value;
+            this.score = score;
         }
     }
 
