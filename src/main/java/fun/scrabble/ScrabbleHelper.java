@@ -62,10 +62,9 @@ public class ScrabbleHelper {
     }
 
     // Version-1 : args is the array of words which are already on the scrabble board. Terrible way to represent board
-    // but hey, wait for next versions.
+    // but hey, wait for next version.
     public static void main(String[] args) throws IOException {
 
-        // letters is the list of letters available to the user.
         List<Letter> availableLettersToPlayer = new ArrayList<>() {{
             add(new Letter('N', 1));
             add(new Letter('S', 1));
