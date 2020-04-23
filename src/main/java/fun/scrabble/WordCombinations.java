@@ -89,16 +89,18 @@ public class WordCombinations {
                                     StringBuilder::toString));
 
             for (String boardWord : args) {
-                if (dictionaryWords.contains((boardWord + strWord).toLowerCase())) {
-                    // boardWord is used as a prefix.
-                    wordsWithScores.add(
-                            new InterestingWord(strWord, boardWord + strWord,
-                                    word.letters.stream().map(letter -> letter.value).reduce(Integer::sum).get()));
-                } else if (dictionaryWords.contains((strWord + boardWord).toLowerCase())) {
-                    // boardWord is used as a suffix.
-                    wordsWithScores.add(
-                            new InterestingWord(strWord, strWord + boardWord,
-                                    word.letters.stream().map(letter -> letter.value).reduce(Integer::sum).get()));
+                // boardWord is used as a prefix.
+                String prefixWord = boardWord + strWord;
+                // boardWord is used as a suffix.
+                String sufixWord = strWord + boardWord;
+                Integer score = word.letters.stream().map(letter -> letter.value).reduce(Integer::sum).get();
+
+                if (dictionaryWords.contains(prefixWord.toLowerCase())) {
+                    wordsWithScores.add(new InterestingWord(strWord, prefixWord, score));
+                }
+
+                if (dictionaryWords.contains(sufixWord.toLowerCase())) {
+                    wordsWithScores.add(new InterestingWord(strWord, sufixWord, score));
                 }
             }
 
