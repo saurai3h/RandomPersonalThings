@@ -68,11 +68,11 @@ public class ScrabbleHelper {
         List<Letter> availableLettersToPlayer = new ArrayList<>() {{
             add(new Letter('N', 1));
             add(new Letter('S', 1));
-            add(new Letter('H', 4));
+            add(new Letter('A', 4));
             add(new Letter('I', 1));
-            add(new Letter('I', 1));
+            add(new Letter('G', 2));
             add(new Letter('T', 1));
-            add(new Letter('E', 1));
+            add(new Letter('A', 1));
         }};
 
         List<Word> words = getAllWordsPossible(availableLettersToPlayer);
@@ -110,7 +110,10 @@ public class ScrabbleHelper {
 
         });
         Collections.sort(wordsWithScores, (o1, o2) -> o2.score - o1.score);
-        wordsWithScores.forEach(wordWithScore -> System.out.println("Using " + wordWithScore.lettersToSelect + ", made " + wordWithScore.wordToForm + " which gets " + wordWithScore.score + " points."));
+        wordsWithScores.forEach(wordWithScore -> {
+            if (wordWithScore.wordToForm.endsWith("T"))
+            System.out.println("Using " + wordWithScore.lettersToSelect + ", made " + wordWithScore.wordToForm + " which gets " + wordWithScore.score + " points.");
+        });
     }
 
     static Set<String> getDictionaryWords() throws IOException {
