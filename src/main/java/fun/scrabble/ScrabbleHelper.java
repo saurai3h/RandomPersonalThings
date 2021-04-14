@@ -109,7 +109,7 @@ public class ScrabbleHelper {
 
 
         });
-        Collections.sort(wordsWithScores, (o1, o2) -> o2.score - o1.score);
+        wordsWithScores.sort((o1, o2) -> o2.score - o1.score);
         wordsWithScores.forEach(wordWithScore -> {
             if (wordWithScore.wordToForm.endsWith("T"))
             System.out.println("Using " + wordWithScore.lettersToSelect + ", made " + wordWithScore.wordToForm + " which gets " + wordWithScore.score + " points.");
